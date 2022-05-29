@@ -1,6 +1,6 @@
 class Transient:
     def __init__(self):
-        ...
+        print('{!} Transient initialized')
 
 
 if __name__ == '__main__':

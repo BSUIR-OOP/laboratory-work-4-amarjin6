@@ -10,7 +10,7 @@ class SingletonMeta(type):
 
 class Singleton(metaclass=SingletonMeta):
     def __init__(self):
-        ...
+        print('{!} Singleton initialized')
 
 
 if __name__ == "__main__":
