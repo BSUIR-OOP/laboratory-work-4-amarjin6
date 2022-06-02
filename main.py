@@ -4,29 +4,28 @@ from mock import Mock
 from dotenv import load_dotenv
 
 
-class ApiClient:
-    def __init__(self, api_key: str, timeout: int):
-        self.api_key = api_key
-        self.timeout = timeout
+class Tools:
+    def __init__(self, tool: str):
+        self.tool = tool
+        print(tool)
 
 
 class Service:
-    def __init__(self, api_client: ApiClient):
-        self.api_client = api_client
+    def __init__(self, tools: Tools):
+        self.tools = tools
 
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
 
-    api_client = providers.Singleton(
-        ApiClient,
-        api_key=config.api_key,
-        timeout=config.timeout,
+    tools = providers.Singleton(
+        Tools,
+        tool=config.tool,
     )
 
     service = providers.Factory(
         Service,
-        api_client=api_client,
+        tools=tools,
     )
 
 
@@ -38,11 +37,10 @@ def main(service: Service = Provide[Container.service]):
 if __name__ == "__main__":
     load_dotenv()
     container = Container()
-    container.config.api_key.from_env("API_KEY", required=True)
-    container.config.timeout.from_env("TIMEOUT", as_=int, default=5)
+    container.config.tool.from_env("tool", required=True)
     container.wire(modules=[__name__])
 
     main()
 
-    with container.api_client.override(Mock()):
+    with container.tools.override(Mock()):
         main()
